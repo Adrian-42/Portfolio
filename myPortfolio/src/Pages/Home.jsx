@@ -12,6 +12,15 @@ import EmergenSeekImage2 from "../assets/Emergenseek/Emergenseek-2.png";
 import EmergenSeekImage3 from "../assets/Emergenseek/Emergenseek-3.png";
 import EmergenSeekImage4 from "../assets/Emergenseek/Emergenseek-4.png";
 import Hoa1 from "../assets/Hoa/Hoa-1.png";
+
+import whiskerwatch1 from "../assets/WhiskerWatch/loginpage.png";
+import whiskerwatch2 from "../assets/WhiskerWatch/whiskermeterclicked.png";
+import whiskerwatch3 from "../assets/WhiskerWatch/catprofiles.png";
+import whiskerwatch4 from "../assets/WhiskerWatch/expandcatprofile.png";
+import whiskerwatch5 from "../assets/WhiskerWatch/guest-homepage.png";
+import whiskerwatch6 from "../assets/WhiskerWatch/donationpage.png";
+import whiskerwatch7 from "../assets/WhiskerWatch/admindashboard.png";
+
 import image1 from "../assets/ImagePicture.png";
 const SKILLS_DATA = [
   {
@@ -70,8 +79,13 @@ const PROJECTS_DATA = [
     textColor: "text-amber-950",
     paperBg: "bg-amber-50/95",
     images: [
-      "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800&auto=format&fit=crop&q=60",
+      whiskerwatch1,
+      whiskerwatch2,
+      whiskerwatch3,
+      whiskerwatch4,
+      whiskerwatch5,
+      whiskerwatch6,
+      whiskerwatch7,
     ],
   },
   {
