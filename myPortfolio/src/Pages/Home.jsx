@@ -7,6 +7,12 @@ import {
 } from "framer-motion";
 import certificate1 from "../assets/SystemAdministration.png";
 import certificate2 from "../assets/JavaFundamentals.png";
+import EmergenSeekImage1 from "../assets/Emergenseek/Emergenseek-1.png";
+import EmergenSeekImage2 from "../assets/Emergenseek/Emergenseek-2.png";
+import EmergenSeekImage3 from "../assets/Emergenseek/Emergenseek-3.png";
+import EmergenSeekImage4 from "../assets/Emergenseek/Emergenseek-4.png";
+import Hoa1 from "../assets/Hoa/Hoa-1.png";
+import image1 from "../assets/ImagePicture.png";
 const SKILLS_DATA = [
   {
     category: "Programming Languages",
@@ -50,17 +56,14 @@ const PROJECTS_DATA = [
     tabColor: "bg-blue-600",
     textColor: "text-blue-950",
     paperBg: "bg-blue-50/95",
-    images: [
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=60",
-    ],
+    images: [Hoa1],
   },
   {
     id: "yellow",
     title: "WhiskerWatch",
     description:
       "A web platform dedicated to pet welfare and monitoring, designed to help pet owners and communities track, manage, and care for animal health and safety.",
-    stack: "React, Node.js, Tailwind CSS",
+    stack: "React, Node.js, Tailwind CSS, PostgreSQL",
     timeline: "Jan 2026 - Present",
     colorClass: "bg-amber-500",
     tabColor: "bg-amber-500",
@@ -76,15 +79,18 @@ const PROJECTS_DATA = [
     title: "EmergenSeek – Emergency Station Recommendation App",
     description:
       "A mobile application designed to assist residents in Taguig City during urgent situations by locating nearby emergency facilities (hospitals, police/fire stations, pharmacies, and barangay centers) using real-time GPS tracking and route navigation.",
-    stack: "Android Studio, Java/Kotlin, Google Maps API, PHP, MySQL",
+    stack:
+      "Android Studio, Flutter, Google Maps API, Javascript, Node.js, MongoDB",
     timeline: "Aug 2025 - Dec 2025",
     colorClass: "bg-rose-500",
     tabColor: "bg-rose-500",
     textColor: "text-rose-950",
     paperBg: "bg-rose-50/95",
     images: [
-      "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?w=800&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop&q=60",
+      EmergenSeekImage1,
+      EmergenSeekImage2,
+      EmergenSeekImage3,
+      EmergenSeekImage4,
     ],
   },
 ];
@@ -443,7 +449,7 @@ const Home = () => {
                 }`}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80"
+                  src={image1}
                   alt="Adrian Rocacorba"
                   className="w-full h-full object-cover"
                 />
@@ -787,15 +793,6 @@ const Home = () => {
                                 </p>
                               </div>
                             </div>
-                          </div>
-
-                          <div
-                            className={`pt-4 mt-4 border-t flex items-center gap-2 opacity-40 text-[10px] font-mono font-bold tracking-wider ${
-                              darkMode ? "border-stone-800" : "border-black/10"
-                            }`}
-                          >
-                            <div className="w-2 h-2 rounded-full bg-red-700" />
-                            <span>INTERNAL DOSSIER VERSION_2.6</span>
                           </div>
                         </div>
 
