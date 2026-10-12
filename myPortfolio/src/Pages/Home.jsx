@@ -5,6 +5,9 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
+import Preloader from "../components/Preloader";
+import CustomCursor from "../components/CustomCursor";
+import MagneticButton from "../components/MagneticButton";
 import certificate1 from "../assets/SystemAdministration.png";
 import certificate2 from "../assets/JavaFundamentals.png";
 import EmergenSeekImage1 from "../assets/Emergenseek/Emergenseek-1.png";
@@ -145,6 +148,28 @@ const CERTIFICATIONS_DATA = [
   },
 ];
 
+// Hero entrance stagger variants — defined at module level to avoid re-creation
+const heroContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.13,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const heroItem = {
+  hidden: { opacity: 0, y: 28, filter: "blur(6px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { type: "spring", stiffness: 240, damping: 24 },
+  },
+};
+
 const Home = () => {
   const [activeTab, setActiveTab] = useState("Home");
   const [activeFolder, setActiveFolder] = useState("blue");
@@ -154,6 +179,7 @@ const Home = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [selectedCertImage, setSelectedCertImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // State for Mobile Navigation Toggle
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -163,6 +189,16 @@ const Home = () => {
       setSkillsIndex((prev) => (prev + 1) % SKILLS_DATA.length);
     }, 4000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Preloader — dismiss after DOM + assets are loaded (min 1600ms for animation)
+  useEffect(() => {
+    const dismiss = () => setTimeout(() => setIsLoading(false), 1600);
+    if (document.readyState === "complete") {
+      dismiss();
+    } else {
+      window.addEventListener("load", dismiss, { once: true });
+    }
   }, []);
 
   const toggleDarkMode = () => {
@@ -189,6 +225,10 @@ const Home = () => {
     [0.1, 0.5],
     [-15, 0],
   );
+
+  // Page-level scroll — powers the fixed top progress bar
+  const { scrollYProgress: pageScrollProgress } = useScroll();
+  const progressScaleX = useTransform(pageScrollProgress, [0, 1], [0, 1]);
 
   const nextImage = (e) => {
     e.stopPropagation();
@@ -237,12 +277,20 @@ const Home = () => {
 
   return (
     <div
-      className={`min-h-screen relative overflow-x-hidden antialiased transition-colors duration-300 ${
+      className={`min-h-screen relative overflow-x-hidden antialiased transition-colors duration-300 cursor-none ${
         darkMode
           ? "bg-stone-950 text-stone-100 selection:bg-orange-900 selection:text-orange-100"
           : "bg-stone-100 text-stone-800 selection:bg-orange-200 selection:text-stone-900"
       }`}
     >
+      {/* === GLOBAL UI: Preloader, Custom Cursor, Scroll Progress === */}
+      <Preloader isLoading={isLoading} />
+      <CustomCursor />
+      <motion.div
+        style={{ scaleX: progressScaleX, transformOrigin: "left" }}
+        className="fixed top-0 left-0 right-0 h-[2px] bg-orange-600 z-[60] pointer-events-none"
+      />
+
       {/* FIXED NAVIGATION BAR */}
       <nav
         className={`fixed left-1/2 top-5 z-50 w-[92%] max-w-5xl -translate-x-1/2 border rounded-3xl transition-all duration-300 shadow-lg ${
@@ -452,9 +500,17 @@ const Home = () => {
       >
         <div className="max-w-5xl w-full flex flex-col md:flex-row items-center justify-between gap-12 md:gap-6 py-12">
           {/* LEFT COLUMN: Profile & Intro */}
-          <div className="flex-1 text-center md:text-left space-y-6 max-w-xl">
+          <motion.div
+            className="flex-1 text-center md:text-left space-y-6 max-w-xl"
+            variants={heroContainer}
+            initial="hidden"
+            animate={isLoading ? "hidden" : "show"}
+          >
             {/* Profile Photo Container */}
-            <div className="relative w-32 h-32 mx-auto md:mx-0 rounded-full p-1 bg-gradient-to-tr from-orange-700 to-amber-400 shadow-md">
+            <motion.div
+              variants={heroItem}
+              className="relative w-32 h-32 mx-auto md:mx-0 rounded-full p-1 bg-gradient-to-tr from-orange-700 to-amber-400 shadow-md"
+            >
               <div
                 className={`w-full h-full rounded-full overflow-hidden border-2 ${
                   darkMode
@@ -468,26 +524,26 @@ const Home = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-            </div>
+            </motion.div>
 
             {/* Text Details */}
-            <div className="space-y-3">
+            <motion.div variants={heroItem} className="space-y-3">
               <span className="text-xs font-mono font-bold tracking-widest uppercase text-orange-600 dark:text-orange-400">
-                Available for Freelance & Full-time
+                Available for Freelance &amp; Full-time
               </span>
               <h1
-                className={`text-4xl md:text-6xl font-serif font-bold leading-tight ${
+                className={`text-4xl md:text-6xl font-serif font-bold leading-tight tracking-tight ${
                   darkMode ? "text-stone-50" : "text-stone-900"
                 }`}
               >
                 Creative Developer
               </h1>
               <p
-                className={`text-base md:text-lg leading-relaxed ${
+                className={`text-base md:text-lg leading-relaxed text-pretty ${
                   darkMode ? "text-stone-300" : "text-stone-600"
                 }`}
               >
-                Hi, I'm{" "}
+                Hi, I&apos;m{" "}
                 <span
                   className={`font-semibold ${
                     darkMode ? "text-stone-100" : "text-stone-900"
@@ -498,20 +554,24 @@ const Home = () => {
                 . I craft thoughtful, clean digital experiences rooted in
                 functional frontend architecture.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-              <button
+            {/* CTA Buttons */}
+            <motion.div
+              variants={heroItem}
+              className="pt-2 flex flex-col sm:flex-row gap-3 justify-center md:justify-start"
+            >
+              <MagneticButton
                 onClick={() => handleScrollToSection("Projects")}
-                className="px-6 py-3 bg-orange-700 text-stone-50 font-medium rounded-full hover:bg-orange-800 shadow-md hover:shadow-lg transition-all duration-200"
+                className="px-6 py-3 bg-orange-700 text-stone-50 font-medium rounded-full hover:bg-orange-800 shadow-md hover:shadow-lg transition-all duration-200 cursor-none"
               >
                 View My Work
-              </button>
+              </MagneticButton>
 
-              <a
+              <MagneticButton
                 href="/resume.pdf"
                 download="Adrian_Rocacorba_Resume.pdf"
-                className={`px-6 py-3 border-2 font-medium rounded-full shadow-sm transition-all duration-200 inline-flex items-center justify-center gap-2 ${
+                className={`px-6 py-3 border-2 font-medium rounded-full shadow-sm transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-none ${
                   darkMode
                     ? "border-stone-700 text-stone-300 hover:bg-stone-800 hover:text-white"
                     : "border-stone-300 text-stone-700 hover:bg-stone-200/60 hover:text-stone-900"
@@ -532,9 +592,10 @@ const Home = () => {
                   />
                 </svg>
                 Download CV
-              </a>
-            </div>
-          </div>
+              </MagneticButton>
+            </motion.div>
+          </motion.div>
+
 
           {/* RIGHT COLUMN: Interactive Skills Card Carousel Stack */}
           <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm h-[320px] relative [perspective:1000px]">
@@ -1247,7 +1308,7 @@ const Home = () => {
         )}
       </AnimatePresence>
 
-      {/* 3. ABOUT SECTION */}
+      {/* 4. ABOUT SECTION */}
       <section
         id="about"
         className={`min-h-screen py-32 border-y px-6 backdrop-blur-xs transition-colors duration-300 ${
@@ -1256,62 +1317,206 @@ const Home = () => {
             : "bg-stone-50/30 border-stone-200/60"
         }`}
       >
-        <div className="max-w-3xl mx-auto text-center">
-          <h2
-            className={`text-3xl font-serif font-bold mb-8 ${
-              darkMode ? "text-stone-50" : "text-stone-900"
+        <div className="max-w-5xl mx-auto">
+          {/* Section Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-12 text-center md:text-left"
+          >
+            <span className="text-xs font-mono font-bold tracking-widest uppercase text-orange-600 dark:text-orange-400">
+              The Person Behind the Code
+            </span>
+            <h2
+              className={`text-4xl md:text-5xl font-serif font-bold mt-1 tracking-tight ${
+                darkMode ? "text-stone-50" : "text-stone-900"
+              }`}
+            >
+              About Me
+            </h2>
+          </motion.div>
+
+          {/* Bento Grid of Quick Facts */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-12">
+            {[
+              { label: "Based In", value: "Manila, PH 🇵🇭", mono: false },
+              { label: "Degree", value: "BSIT — 2026", mono: true },
+              { label: "Focus", value: "Full-Stack Dev", mono: false },
+              { label: "Stack", value: "React + PostgreSQL", mono: true },
+              { label: "Open To", value: "Full-time & Freelance", mono: false },
+              { label: "Response Time", value: "< 24 hours", mono: true },
+            ].map((fact, i) => (
+              <motion.div
+                key={fact.label}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  delay: i * 0.07,
+                  duration: 0.5,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className={`p-4 rounded-2xl border transition-colors shadow-sm ${
+                  darkMode
+                    ? "bg-stone-900/60 border-stone-800 hover:border-stone-700"
+                    : "bg-white border-stone-200 hover:border-stone-300"
+                }`}
+              >
+                <p className="text-[10px] font-mono uppercase text-stone-500 tracking-widest mb-1">
+                  {fact.label}
+                </p>
+                <p
+                  className={`font-semibold text-sm ${fact.mono ? "font-mono" : ""} ${
+                    darkMode ? "text-stone-100" : "text-stone-900"
+                  }`}
+                >
+                  {fact.value}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Bio — split into 3 scannable paragraphs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className={`max-w-3xl space-y-5 text-base leading-relaxed text-pretty ${
+              darkMode ? "text-stone-300" : "text-stone-600"
             }`}
           >
-            About Me
-          </h2>
-          <p
-            className={`leading-relaxed text-lg mb-6 ${
-              darkMode ? "text-stone-300" : "text-stone-700"
-            }`}
-          >
-            I am a fresh Bachelor of Science in Information Technology (BSIT)
-            graduate from STI College Global City, deeply motivated by building
-            clean, functional software systems. Spending my formative academic
-            years in the heart of Bonifacio Global City’s tech hub naturally
-            shaped my perspective toward industry-standard practices, system
-            efficiency, and modern engineering design. My core expertise lies in
-            full-stack web and mobile development, specifically building
-            responsive user interfaces with React and Tailwind CSS, coupled with
-            secure relational database architectures like PostgreSQL. Throughout
-            my academic journey, I focused on translating real-world operational
-            problems into running digital systems—most notably architecting an
-            internal homeowner portal tracking internal logistics and billing
-            records. I thrive at the intersection of logical backend data flow
-            and responsive, interactive frontend layout design. I am currently
-            looking for full-time software development roles where I can
-            contribute to production-grade applications and scale alongside a
-            high-performing engineering team.
-          </p>
+            <p>
+              I&apos;m a fresh{" "}
+              <span
+                className={`font-semibold ${
+                  darkMode ? "text-stone-100" : "text-stone-800"
+                }`}
+              >
+                BSIT graduate from STI College Global City
+              </span>{" "}
+              — trained in the heart of Bonifacio Global City&apos;s tech hub,
+              which shaped my eye for industry-standard practices and modern
+              engineering design.
+            </p>
+            <p>
+              My core expertise is{" "}
+              <span
+                className={`font-semibold ${
+                  darkMode ? "text-stone-100" : "text-stone-800"
+                }`}
+              >
+                full-stack web &amp; mobile development
+              </span>{" "}
+              — building responsive React interfaces backed by secure PostgreSQL
+              architectures. Throughout my academic journey I translated
+              real-world problems into running systems, most notably an internal
+              homeowner portal tracking logistics and billing records.
+            </p>
+            <p>
+              I thrive at the intersection of{" "}
+              <span
+                className={`font-semibold ${
+                  darkMode ? "text-stone-100" : "text-stone-800"
+                }`}
+              >
+                logical backend data flow and interactive frontend design
+              </span>
+              . I&apos;m actively seeking full-time software development roles
+              where I can contribute to production-grade applications alongside a
+              high-performing team.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* 4. CONTACT SECTION */}
+
+      {/* 5. CONTACT SECTION */}
       <section
         id="contact"
         className="min-h-[80vh] flex flex-col justify-center items-center px-6 py-32 text-center"
       >
-        <h2
-          className={`text-3xl font-serif font-bold mb-6 ${
+        {/* Overline */}
+        <motion.span
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="text-xs font-mono font-bold tracking-widest uppercase text-orange-600 dark:text-orange-400 mb-4 block"
+        >
+          Available Now
+        </motion.span>
+
+        {/* Hero Headline */}
+        <motion.h2
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          className={`text-4xl md:text-6xl font-serif font-bold text-center max-w-3xl leading-tight tracking-tight mb-4 ${
             darkMode ? "text-stone-50" : "text-stone-900"
           }`}
         >
-          Let's Build Something Together
-        </h2>
-        <a
-          href="mailto:rocacorba445@gmail.com"
-          className={`px-8 py-3.5 border-2 font-medium rounded-full shadow-sm transition-all duration-200 ${
-            darkMode
-              ? "border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-stone-950"
-              : "border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-stone-50"
+          Let&apos;s Build Something{" "}
+          <span className="text-orange-600 dark:text-orange-500">Together</span>
+        </motion.h2>
+
+        {/* Sub-copy */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.22, duration: 0.55 }}
+          className={`text-base mb-10 text-pretty max-w-sm ${
+            darkMode ? "text-stone-400" : "text-stone-500"
           }`}
         >
-          Get In Touch
-        </a>
+          Whether it&apos;s a product, a freelance project, or just a
+          conversation — my inbox is always open.
+        </motion.p>
+
+        {/* Magnetic CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.32, duration: 0.5 }}
+        >
+          <MagneticButton
+            href="mailto:rocacorba445@gmail.com"
+            className="px-10 py-4 bg-orange-700 text-stone-50 font-semibold rounded-full hover:bg-orange-800 shadow-lg hover:shadow-orange-700/20 hover:shadow-2xl transition-all duration-300 text-base inline-flex items-center gap-2 cursor-none"
+          >
+            Get In Touch →
+          </MagneticButton>
+        </motion.div>
+
+        {/* Social Links */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.45, duration: 0.5 }}
+          className="flex items-center gap-6 mt-10"
+        >
+          {[
+            { label: "GitHub", href: "https://github.com/" },
+            { label: "LinkedIn", href: "https://linkedin.com/in/" },
+          ].map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`text-xs font-mono opacity-50 hover:opacity-100 transition-opacity underline-offset-4 hover:underline ${
+                darkMode ? "text-stone-400" : "text-stone-600"
+              }`}
+            >
+              {s.label}
+            </a>
+          ))}
+        </motion.div>
       </section>
     </div>
   );
