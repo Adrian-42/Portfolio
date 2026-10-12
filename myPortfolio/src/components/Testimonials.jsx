@@ -17,7 +17,7 @@ const TESTIMONIALS = [
   },
   {
     id: 2,
-    name: "Joanna Mae Reyes",
+    name: "Tish Dela Fuente",
     role: "Co-Developer",
     company: "WhiskerWatch Team",
     initials: "JR",
@@ -49,7 +49,11 @@ const TESTIMONIALS = [
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 const StarRating = ({ rating }) => (
-  <div className="flex gap-0.5" role="img" aria-label={`${rating} out of 5 stars`}>
+  <div
+    className="flex gap-0.5"
+    role="img"
+    aria-label={`${rating} out of 5 stars`}
+  >
     {[...Array(5)].map((_, i) => (
       <svg
         key={i}
@@ -84,7 +88,8 @@ const TestimonialCard = ({ testimonial, darkMode, index }) => (
     <div
       className="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
       style={{
-        background: "linear-gradient(135deg, rgba(194,65,12,0.08), transparent 60%)",
+        background:
+          "linear-gradient(135deg, rgba(194,65,12,0.08), transparent 60%)",
       }}
     />
 
@@ -111,7 +116,9 @@ const TestimonialCard = ({ testimonial, darkMode, index }) => (
     <StarRating rating={testimonial.rating} />
 
     {/* Divider */}
-    <div className={`border-t ${darkMode ? "border-stone-800" : "border-stone-100"}`} />
+    <div
+      className={`border-t ${darkMode ? "border-stone-800" : "border-stone-100"}`}
+    />
 
     {/* Author row */}
     <div className="flex items-center gap-3">
@@ -165,15 +172,23 @@ const Testimonials = ({ darkMode, onContactClick }) => {
         >
           Feedback &amp; Collaborations
         </h2>
-        <p className={`mt-3 text-sm max-w-lg ${darkMode ? "text-stone-400" : "text-stone-500"}`}>
-          From professors, teammates, and project stakeholders who experienced the work first-hand.
+        <p
+          className={`mt-3 text-sm max-w-lg ${darkMode ? "text-stone-400" : "text-stone-500"}`}
+        >
+          From professors, teammates, and project stakeholders who experienced
+          the work first-hand.
         </p>
       </motion.div>
 
       {/* ── Testimonial cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {TESTIMONIALS.map((t, i) => (
-          <TestimonialCard key={t.id} testimonial={t} darkMode={darkMode} index={i} />
+          <TestimonialCard
+            key={t.id}
+            testimonial={t}
+            darkMode={darkMode}
+            index={i}
+          />
         ))}
       </div>
 
@@ -218,8 +233,8 @@ const Testimonials = ({ darkMode, onContactClick }) => {
             darkMode ? "text-stone-400" : "text-stone-500"
           }`}
         >
-          Whether it&apos;s a startup, a freelance project, or a full-time role — I&apos;m ready
-          to contribute from day one.
+          Whether it&apos;s a startup, a freelance project, or a full-time role
+          — I&apos;m ready to contribute from day one.
         </p>
         <button
           onClick={onContactClick}
@@ -235,7 +250,11 @@ const Testimonials = ({ darkMode, onContactClick }) => {
             className="w-4 h-4"
             aria-hidden="true"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+            />
           </svg>
         </button>
       </motion.div>
@@ -244,4 +263,3 @@ const Testimonials = ({ darkMode, onContactClick }) => {
 };
 
 export default Testimonials;
-

@@ -157,17 +157,6 @@ const ProjectCard = ({ project, index, darkMode, onOpenModal }) => (
             className="absolute bottom-0 left-0 h-[3px] w-full opacity-80"
             style={{ backgroundColor: project.accent }}
           />
-          {/* Status badge */}
-          <span
-            className={`absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold backdrop-blur-sm border ${
-              project.status === "Active"
-                ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                : "bg-stone-500/15 text-stone-400 border-stone-500/30"
-            }`}
-          >
-            {project.status === "Active" ? "● " : "◎ "}
-            {project.status}
-          </span>
         </div>
 
         {/* ── Content zone ── */}
@@ -330,28 +319,16 @@ const CaseStudyModal = ({ project, darkMode, onClose }) => {
 
             {/* Left: text content */}
             <div className="flex-1 p-6 md:p-8 space-y-7 min-w-0">
-              {/* Title + status */}
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2
-                    className={`text-2xl md:text-3xl font-serif font-black leading-tight ${
-                      darkMode ? "text-stone-50" : "text-stone-900"
-                    }`}
-                  >
-                    {project.title}
-                  </h2>
-                  <p className="text-xs font-mono text-stone-500 mt-0.5">{project.timeline}</p>
-                </div>
-                <span
-                  className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border flex-shrink-0 mt-1"
-                  style={{
-                    color: project.accent,
-                    borderColor: `${project.accent}40`,
-                    backgroundColor: project.accentLight,
-                  }}
+              {/* Title */}
+              <div>
+                <h2
+                  className={`text-2xl md:text-3xl font-serif font-black leading-tight ${
+                    darkMode ? "text-stone-50" : "text-stone-900"
+                  }`}
                 >
-                  {project.status}
-                </span>
+                  {project.title}
+                </h2>
+                <p className="text-xs font-mono text-stone-500 mt-0.5">{project.timeline}</p>
               </div>
 
               {/* Problem */}

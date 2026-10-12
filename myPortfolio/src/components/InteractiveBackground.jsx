@@ -3,11 +3,11 @@ import { useEffect, useRef } from "react";
 /**
  * InteractiveBackground — three-layer ambient system:
  * 1. Animated warm-toned gradient blobs (CSS keyframes)
- * 2. Subtle dot-matrix grid overlay
- * 3. Cursor-following radial spotlight (CSS custom properties via rAF)
+ * 2. Subtle developer dot-matrix grid overlay
+ * 3. Dynamic mouse-follow radial spotlight
  *
- * All layers are pointer-events-none and aria-hidden.
- * Performance: GPU-composited transforms only, passive event listener, rAF throttle.
+ * Stacking context: z-0 fixed inset-0 pointer-events-none
+ * Renders directly over the base canvas, visible through semi-transparent cards & sections.
  */
 const InteractiveBackground = ({ darkMode }) => {
   const containerRef = useRef(null);
@@ -19,7 +19,6 @@ const InteractiveBackground = ({ darkMode }) => {
     let rafId = null;
 
     const onMouseMove = (e) => {
-      // Cancel any pending frame so we only paint once per frame
       if (rafId) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         el.style.setProperty("--mx", `${e.clientX}px`);
@@ -38,105 +37,106 @@ const InteractiveBackground = ({ darkMode }) => {
     <div
       ref={containerRef}
       aria-hidden="true"
-      className="fixed inset-0 -z-10 overflow-hidden pointer-events-none"
+      className="fixed inset-0 z-0 overflow-hidden pointer-events-none transition-colors duration-500"
       style={{ "--mx": "50vw", "--my": "50vh" }}
     >
-      {/* ── Keyframe definitions ── */}
+      {/* ── Keyframe definitions for smooth ambient floating ── */}
       <style>{`
         @keyframes bg-blob-1 {
-          0%,100% { transform: translate(0%, 0%) scale(1); }
-          33%      { transform: translate(7%, -14%) scale(1.08); }
-          66%      { transform: translate(-5%, 9%) scale(0.94); }
+          0%, 100% { transform: translate3d(0%, 0%, 0) scale(1); }
+          33%      { transform: translate3d(8%, -12%, 0) scale(1.1); }
+          66%      { transform: translate3d(-6%, 8%, 0) scale(0.95); }
         }
         @keyframes bg-blob-2 {
-          0%,100% { transform: translate(0%, 0%) scale(1); }
-          33%      { transform: translate(-9%, 7%) scale(1.06); }
-          66%      { transform: translate(10%, -8%) scale(1.1); }
+          0%, 100% { transform: translate3d(0%, 0%, 0) scale(1); }
+          33%      { transform: translate3d(-10%, 8%, 0) scale(1.08); }
+          66%      { transform: translate3d(8%, -10%, 0) scale(1.12); }
         }
         @keyframes bg-blob-3 {
-          0%,100% { transform: translate(0%, 0%) scale(1); }
-          50%      { transform: translate(5%, 12%) scale(0.92); }
+          0%, 100% { transform: translate3d(0%, 0%, 0) scale(1); }
+          50%      { transform: translate3d(6%, 10%, 0) scale(0.92); }
         }
       `}</style>
 
-      {/* ── LAYER 1: Blob 1 — top-left warm orange ── */}
+      {/* ── LAYER 1: Ambient Mesh Gradient Blobs ── */}
+      {/* Blob 1 — Top-Left warm amber/orange aura */}
       <div
         style={{
           position: "absolute",
-          width: 600,
-          height: 600,
+          width: 650,
+          height: 650,
           borderRadius: "50%",
-          top: "-8%",
-          left: "-6%",
+          top: "-10%",
+          left: "-8%",
           background: darkMode
-            ? "radial-gradient(circle, rgba(194,65,12,0.55) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(253,186,116,0.45) 0%, transparent 70%)",
-          filter: "blur(110px)",
-          opacity: darkMode ? 0.28 : 0.35,
+            ? "radial-gradient(circle, rgba(234,88,12,0.45) 0%, rgba(249,115,22,0.15) 45%, transparent 70%)"
+            : "radial-gradient(circle, rgba(249,115,22,0.32) 0%, rgba(251,146,60,0.12) 45%, transparent 70%)",
+          filter: "blur(85px)",
+          opacity: darkMode ? 0.75 : 0.65,
           willChange: "transform",
-          animation: "bg-blob-1 20s ease-in-out infinite",
+          animation: "bg-blob-1 22s ease-in-out infinite",
         }}
       />
 
-      {/* ── LAYER 1: Blob 2 — bottom-right amber ── */}
+      {/* Blob 2 — Bottom-Right amber glow */}
       <div
         style={{
           position: "absolute",
-          width: 520,
-          height: 520,
+          width: 580,
+          height: 580,
           borderRadius: "50%",
-          bottom: "5%",
+          bottom: "2%",
           right: "-8%",
           background: darkMode
-            ? "radial-gradient(circle, rgba(120,53,15,0.6) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(253,230,138,0.5) 0%, transparent 70%)",
+            ? "radial-gradient(circle, rgba(217,119,6,0.38) 0%, rgba(180,83,9,0.12) 45%, transparent 70%)"
+            : "radial-gradient(circle, rgba(251,191,36,0.38) 0%, rgba(245,158,11,0.12) 45%, transparent 70%)",
           filter: "blur(90px)",
-          opacity: darkMode ? 0.22 : 0.3,
+          opacity: darkMode ? 0.7 : 0.6,
           willChange: "transform",
-          animation: "bg-blob-2 25s ease-in-out infinite",
+          animation: "bg-blob-2 26s ease-in-out infinite",
         }}
       />
 
-      {/* ── LAYER 1: Blob 3 — center neutral ── */}
+      {/* Blob 3 — Mid-canvas subtle depth aura */}
       <div
         style={{
           position: "absolute",
-          width: 380,
-          height: 380,
+          width: 450,
+          height: 450,
           borderRadius: "50%",
-          top: "42%",
-          left: "38%",
+          top: "40%",
+          left: "35%",
           background: darkMode
-            ? "radial-gradient(circle, rgba(28,25,23,0.8) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(231,229,228,0.6) 0%, transparent 70%)",
-          filter: "blur(70px)",
-          opacity: darkMode ? 0.4 : 0.5,
+            ? "radial-gradient(circle, rgba(194,65,12,0.28) 0%, rgba(124,45,18,0.08) 50%, transparent 70%)"
+            : "radial-gradient(circle, rgba(253,186,116,0.35) 0%, rgba(254,215,170,0.1) 50%, transparent 70%)",
+          filter: "blur(80px)",
+          opacity: darkMode ? 0.65 : 0.55,
           willChange: "transform",
           animation: "bg-blob-3 30s ease-in-out infinite",
         }}
       />
 
-      {/* ── LAYER 2: Dot matrix ── */}
+      {/* ── LAYER 2: Minimalist Dot Matrix Pattern ── */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           backgroundImage: darkMode
-            ? "radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)"
-            : "radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px)",
+            ? "radial-gradient(circle, rgba(255,255,255,0.14) 1.2px, transparent 1.2px)"
+            : "radial-gradient(circle, rgba(0,0,0,0.09) 1.2px, transparent 1.2px)",
           backgroundSize: "28px 28px",
         }}
       />
 
-      {/* ── LAYER 3: Cursor spotlight ── */}
+      {/* ── LAYER 3: Dynamic Mouse-Follow Radial Spotlight ── */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           background: darkMode
-            ? "radial-gradient(650px circle at var(--mx) var(--my), rgba(194,65,12,0.09) 0%, transparent 58%)"
-            : "radial-gradient(650px circle at var(--mx) var(--my), rgba(194,65,12,0.055) 0%, transparent 58%)",
-          transition: "background 0.05s linear",
+            ? "radial-gradient(600px circle at var(--mx) var(--my), rgba(249,115,22,0.16) 0%, rgba(234,88,12,0.05) 35%, transparent 65%)"
+            : "radial-gradient(600px circle at var(--mx) var(--my), rgba(234,88,12,0.12) 0%, rgba(249,115,22,0.035) 35%, transparent 65%)",
+          willChange: "background",
         }}
       />
     </div>
@@ -144,4 +144,3 @@ const InteractiveBackground = ({ darkMode }) => {
 };
 
 export default InteractiveBackground;
-
