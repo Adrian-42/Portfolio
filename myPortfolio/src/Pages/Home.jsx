@@ -8,6 +8,9 @@ import {
 import Preloader from "../components/Preloader";
 import CustomCursor from "../components/CustomCursor";
 import MagneticButton from "../components/MagneticButton";
+import InteractiveBackground from "../components/InteractiveBackground";
+import ProjectsGrid from "../components/ProjectsGrid";
+import Testimonials from "../components/Testimonials";
 import certificate1 from "../assets/SystemAdministration.png";
 import certificate2 from "../assets/JavaFundamentals.png";
 import EmergenSeekImage1 from "../assets/Emergenseek/Emergenseek-1.png";
@@ -283,9 +286,10 @@ const Home = () => {
           : "bg-stone-100 text-stone-800 selection:bg-orange-200 selection:text-stone-900"
       }`}
     >
-      {/* === GLOBAL UI: Preloader, Custom Cursor, Scroll Progress === */}
+      {/* === GLOBAL UI: Preloader, Custom Cursor, Scroll Progress, Background === */}
       <Preloader isLoading={isLoading} />
       <CustomCursor />
+      <InteractiveBackground darkMode={darkMode} />
       <motion.div
         style={{ scaleX: progressScaleX, transformOrigin: "left" }}
         className="fixed top-0 left-0 right-0 h-[2px] bg-orange-600 z-[60] pointer-events-none"
@@ -695,387 +699,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 2. PROJECTS SECTION */}
-      <motion.section
-        ref={containerRef}
-        id="projects"
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: false, amount: 0.2 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="min-h-screen py-32 px-6 flex flex-col items-center justify-center max-w-5xl mx-auto"
-      >
-        <div className="w-full text-center md:text-left mb-16">
-          <h2
-            className={`text-3xl font-serif font-bold border-b pb-4 ${
-              darkMode
-                ? "text-stone-100 border-stone-800"
-                : "text-stone-900 border-stone-300/60"
-            }`}
-          >
-            Selected Projects
-          </h2>
-          <p
-            className={`text-sm mt-2 ${
-              darkMode ? "text-stone-400" : "text-stone-500"
-            }`}
-          >
-            Click a background tab to bring that project file to the front layer
-          </p>
-        </div>
-
-        <motion.div
-          style={{ y: folderStackY, rotateX: initialFanRotation }}
-          className="relative w-full max-w-4xl h-[540px] md:h-[600px] flex items-start justify-center [perspective:1000px]"
-        >
-          {PROJECTS_DATA.map((project, index) => {
-            const isActive = project.id === activeFolder;
-
-            const fanStyles = {
-              pink: {
-                rotate: "-4deg",
-                x: -20,
-                y: -20,
-                zIndex: isActive ? 40 : 15,
-              },
-              yellow: {
-                rotate: "2deg",
-                x: 10,
-                y: 0,
-                zIndex: isActive ? 40 : 25,
-              },
-              blue: {
-                rotate: "7deg",
-                x: 35,
-                y: 20,
-                zIndex: isActive ? 40 : 35,
-              },
-            };
-
-            const layout = fanStyles[project.id] || {
-              rotate: 0,
-              x: 0,
-              y: 0,
-              zIndex: 10,
-            };
-
-            return (
-              <motion.div
-                key={project.id}
-                onClick={() => {
-                  setActiveFolder(project.id);
-                  setCarouselIndex(0);
-                }}
-                initial={{ x: 250, opacity: 0, rotate: 12 }}
-                whileInView={{
-                  x: isActive ? 0 : layout.x,
-                  y: isActive ? 30 : layout.y,
-                  rotate: isActive ? 0 : layout.rotate,
-                  scale: isActive ? 1.02 : 0.96,
-                  opacity: 1,
-                }}
-                whileHover={{
-                  y: isActive ? 18 : layout.y - 12,
-                  scale: isActive ? 1.035 : 0.985,
-                  boxShadow: "0px 20px 30px -10px rgba(0, 0, 0, 0.3)",
-                }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{
-                  duration: 0.9,
-                  delay: index * 0.18,
-                  ease: [0.16, 1, 0.3, 1],
-                  whileHover: { type: "spring", stiffness: 300, damping: 20 },
-                }}
-                style={{ zIndex: layout.zIndex }}
-                className={`absolute top-0 w-full max-w-[96%] sm:max-w-3xl aspect-[4/3] rounded-2xl shadow-xl border cursor-pointer p-2 pb-6 ${
-                  darkMode
-                    ? "bg-stone-900 border-stone-800"
-                    : `${project.colorClass} border-black/5`
-                }`}
-              >
-                {/* Folder Tab Header */}
-                <div
-                  className={`absolute -top-[23px] left-6 h-6 w-44 rounded-t-xl ${
-                    darkMode ? "bg-stone-800" : project.tabColor
-                  } flex items-center px-4 shadow-[-1px_-3px_4px_rgba(0,0,0,0.03)]`}
-                  style={{
-                    clipPath: "polygon(0% 100%, 8% 0%, 92% 0%, 100% 100%)",
-                  }}
-                >
-                  <span
-                    className={`text-[9px] font-bold tracking-wider uppercase truncate ${
-                      darkMode ? "text-amber-400" : "text-stone-50 opacity-80"
-                    }`}
-                  >
-                    {project.id === "blue" ? "Active Case" : "Archive"}
-                  </span>
-                </div>
-
-                {/* Inner Folder Paper Sheet */}
-                <div
-                  className={`w-full h-full rounded-xl p-5 md:p-8 flex flex-col md:flex-row gap-6 overflow-y-auto shadow-inner transition-colors duration-300 ${
-                    darkMode ? "bg-stone-950/80" : project.paperBg
-                  }`}
-                >
-                  <AnimatePresence mode="wait">
-                    {isActive ? (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="w-full h-full flex flex-col md:flex-row gap-6"
-                      >
-                        <div
-                          className={`flex-1 flex flex-col justify-between ${
-                            darkMode ? "text-stone-200" : project.textColor
-                          }`}
-                        >
-                          <div>
-                            <span className="text-[10px] font-mono font-bold tracking-widest uppercase opacity-60">
-                              📁 PROJECT ARCHIVE
-                            </span>
-                            <h3
-                              className={`text-2xl md:text-3xl font-serif font-black mt-0.5 mb-3 leading-tight ${
-                                darkMode ? "text-stone-50" : ""
-                              }`}
-                            >
-                              {project.title}
-                            </h3>
-
-                            <div className="space-y-3 text-xs md:text-sm leading-relaxed">
-                              <div>
-                                <h4 className="font-bold uppercase tracking-wide text-[11px] opacity-70">
-                                  Summary
-                                </h4>
-                                <p className="mt-0.5 opacity-90">
-                                  {project.description}
-                                </p>
-                              </div>
-                              <div>
-                                <h4 className="font-bold uppercase tracking-wide text-[11px] opacity-70">
-                                  Stack Framework
-                                </h4>
-                                <p className="mt-0.5 font-mono text-xs opacity-90">
-                                  {project.stack}
-                                </p>
-                              </div>
-                              <div>
-                                <h4 className="font-bold uppercase tracking-wide text-[11px] opacity-70">
-                                  Development Span
-                                </h4>
-                                <p className="mt-0.5 opacity-90">
-                                  {project.timeline}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Preview Glass Panel */}
-                        <div className="flex-1 flex flex-col justify-center items-center">
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedImageIndex(carouselIndex);
-                            }}
-                            className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-stone-900 border border-black/10 group cursor-zoom-in"
-                          >
-                            <img
-                              src={project.images[carouselIndex]}
-                              alt="Project viewport context"
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-
-                            <div className="absolute inset-0 bg-black/15 transition-opacity group-hover:bg-black/25 flex items-center justify-center">
-                              <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white text-[11px] font-mono px-3 py-1.5 rounded-full backdrop-blur-md border border-white/20">
-                                🔍 Click to expand frame
-                              </span>
-                            </div>
-
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                prevImage(e);
-                              }}
-                              className="absolute left-3 top-1/3 -translate-y-1/2 w-8 h-8 rounded-full bg-black/20 hover:bg-black/50 text-white border border-white/10 flex items-center justify-center text-sm font-bold backdrop-blur-md transition select-none z-10"
-                            >
-                              ‹
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                nextImage(e);
-                              }}
-                              className="absolute right-3 top-1/3 -translate-y-1/2 w-8 h-8 rounded-full bg-black/20 hover:bg-black/50 text-white border border-white/10 flex items-center justify-center text-sm font-bold backdrop-blur-md transition select-none z-10"
-                            >
-                              ›
-                            </button>
-
-                            <div className="absolute top-3 right-3 flex gap-1">
-                              {project.images.map((_, dotIdx) => (
-                                <div
-                                  key={dotIdx}
-                                  className={`h-1 rounded-full transition-all duration-300 ${
-                                    carouselIndex === dotIdx
-                                      ? "w-4 bg-white"
-                                      : "w-1 bg-white/40"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <div className="w-full h-full flex flex-col justify-start pointer-events-none opacity-20">
-                        <div
-                          className={`h-5 w-1/3 rounded mb-3 ${
-                            darkMode ? "bg-stone-700" : "bg-stone-400"
-                          }`}
-                        />
-                        <div
-                          className={`h-3 w-full rounded mb-2 ${
-                            darkMode ? "bg-stone-800" : "bg-stone-300"
-                          }`}
-                        />
-                        <div
-                          className={`h-3 w-4/5 rounded ${
-                            darkMode ? "bg-stone-800" : "bg-stone-300"
-                          }`}
-                        />
-                      </div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        {/* LIGHTBOX MODAL */}
-        <AnimatePresence>
-          {selectedImageIndex !== null && activeProject && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => setSelectedImageIndex(null)}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 sm:p-8"
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative max-w-5xl w-full bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col"
-              >
-                {/* Modal Header Bar */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-stone-800 bg-stone-950/60">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-                    <span className="ml-2 font-mono text-xs text-stone-400 uppercase tracking-widest">
-                      {activeProject.title} — Frame {selectedImageIndex + 1} of{" "}
-                      {activeProject.images.length}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => setSelectedImageIndex(null)}
-                    className="p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-stone-800 transition-colors"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Modal Viewport */}
-                <div className="relative p-2 sm:p-6 bg-stone-950/90 flex items-center justify-center min-h-[350px] sm:min-h-[500px]">
-                  <button
-                    onClick={() =>
-                      setSelectedImageIndex(
-                        (prev) =>
-                          (prev - 1 + activeProject.images.length) %
-                          activeProject.images.length,
-                      )
-                    }
-                    className="absolute left-4 z-20 p-3 rounded-full bg-stone-900/80 text-white border border-stone-700/60 hover:bg-orange-700 hover:border-orange-600 transition-all shadow-lg backdrop-blur-md"
-                    title="Previous Image"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2.5}
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 19.5L8.25 12l7.5-7.5"
-                      />
-                    </svg>
-                  </button>
-
-                  <AnimatePresence mode="wait">
-                    <motion.img
-                      key={selectedImageIndex}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.2 }}
-                      src={activeProject.images[selectedImageIndex]}
-                      alt="Expanded project preview"
-                      className="max-h-[70vh] w-auto max-w-full object-contain rounded-lg shadow-2xl"
-                    />
-                  </AnimatePresence>
-
-                  <button
-                    onClick={() =>
-                      setSelectedImageIndex(
-                        (prev) => (prev + 1) % activeProject.images.length,
-                      )
-                    }
-                    className="absolute right-4 z-20 p-3 rounded-full bg-stone-900/80 text-white border border-stone-700/60 hover:bg-orange-700 hover:border-orange-600 transition-all shadow-lg backdrop-blur-md"
-                    title="Next Image"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2.5}
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.section>
+      {/* 2. PROJECTS SECTION — rendered by ProjectsGrid component */}
+      <ProjectsGrid darkMode={darkMode} />
 
       {/* 3. CERTIFICATIONS SECTION */}
       <motion.section
@@ -1307,6 +932,12 @@ const Home = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* TESTIMONIALS SECTION */}
+      <Testimonials
+        darkMode={darkMode}
+        onContactClick={() => handleScrollToSection("Contact")}
+      />
 
       {/* 4. ABOUT SECTION */}
       <section
